@@ -42,18 +42,20 @@ body{
     height: 400px;
     margin-bottom: 15px;
 }
+#search-bar > *{
+    height: 30px;
+}
+#current-temp{
+    font-size: 38px;
+}
+
+/* Not needed until don't have a not free API key
 #forcast{
     margin-top: 70px;
     display: flex;
     gap: 50px
 }
-#search-bar > *{
-    height: 30px;
-}
-
 .forcast-img{
     height: 50px;
 }
-#current-temp{
-    font-size: 38px;
-}
+*/
