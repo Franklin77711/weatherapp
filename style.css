@@ -1,19 +1,18 @@
 body{
-    height: 100vh;
     margin: 0;
     padding: 0;
     font-family: Arial, Helvetica, sans-serif;
 }
 #title{
     color: aqua;
-    font-size: 3em;
+    font-size: 3rem;
     text-align: center;
     margin: 0;
     padding-top: 1rem;
 }
 
 #search-bar{
-    margin: 3em 0 10em 0;
+    margin: 2em 0;
     display: flex;
     gap: 50px;
     justify-content: center;
@@ -23,6 +22,10 @@ body{
     position: relative;
     top: 3px;
 }
+#search-input{
+    margin: 0.5em 0;
+}
+
 #input-div{
     display: flex;
     flex-direction: column;
@@ -32,7 +35,7 @@ body{
     text-align: center;
 }
 #current-img{
-    width: 10em;
+    width: 7em;
     margin-bottom: 15px;
 }
 
@@ -58,13 +61,41 @@ button:focus {
     margin: 1em 0;
 }
 
-/* Not needed until don't have a not free API key
+#city-name{
+    font-size: 2rem;
+}
+
 #forcast{
-    margin-top: 70px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
     display: flex;
-    gap: 50px
+    gap: 1em;
+    justify-content: space-around;
 }
-.forcast-img{
-    height: 50px;
+.day-cast{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1em;
+    align-items: center;
+
 }
-*/
+.day-cast > img{
+    width: 5em;
+}
+
+@media (max-width: 600px){
+    #forcast{
+        flex-direction: column;
+        position: relative;
+        margin-top: 3em;
+        align-items: center;
+    }
+    .day-cast{
+        flex-direction: row;
+        gap: 3em;
+        margin-left: 1em;
+        margin-bottom: 1em;
+    
+    }
+}

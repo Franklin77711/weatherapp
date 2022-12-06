@@ -24,21 +24,32 @@ const apiCodes ={
 
 }
 
+// current
 async function getTemp(){
     let cityName = searchInp.value;
     const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=1de312eefbe68f2e6d01aab3b718e659&units=metric`);
     const weatherData = await response.json();
-    //error handle
-    if(weatherData.cod == 400 || weatherData.cod == 404){
-        alert(weatherData.message);
-    }
     if(weatherDiv.childElementCount > 1){
         weatherDiv.innerHTML="";
     }
-    creation(weatherData);
+    //error handle
+    if(weatherData.cod == 400 || weatherData.cod == 404){
+        alert(weatherData.message);
+    }else{
+        creation(weatherData);
+        searchInp.value = '';
+    }
     }
 
+
 function creation(weatherData){
+    let cityName = document.createElement('div');
+    cityName.setAttribute('id', 'city-name');
+    let lowCityName = searchInp.value;
+    cityName.textContent = lowCityName.charAt(0).toUpperCase() + lowCityName.slice(1);
+    weatherDiv.appendChild(cityName);
+
+  
     let responseID = weatherData.weather[0].id;
     let currentTempImg = document.createElement('img');
     currentTempImg.setAttribute('id', 'current-img');
@@ -60,6 +71,7 @@ function creation(weatherData){
         currentTempImg.src = halfCloudImg;
     }
     weatherDiv.appendChild(currentTempImg);
+    
     let currentTemp = document.createElement('div');
     currentTemp.setAttribute('id', 'current-temp');
     currentTemp.textContent = `${Math.round(weatherData.main.temp)} °C`;
@@ -73,19 +85,9 @@ function creation(weatherData){
     systemBtn.textContent = "Use Fahrenheit";
     weatherDiv.appendChild(systemBtn);
     systemBtn.addEventListener('click', convertSystem.bind(null, Math.round(weatherData.main.temp), Math.round(weatherData.main.feels_like), currentTemp, feelTmp, systemBtn));
+
 }
 
-/*function getCurrentSystem(){
-    let system = '';
-    if(temperature.textContent.includes("°C")){
-    system = 'metric';
-    }else if(temperature.textContent.includes("°F")){
-    system = 'imperial';
-    }
-    console.log(system); 
-    return (system) 
-    
-}*/
 
 function convertSystem(tempNum,feelNum, curTmp, feel, btn){
     let feelInCel = feelNum;
@@ -107,4 +109,11 @@ function remove(){
     weatherDiv.innerHTML="";
 }
 searchBtn.addEventListener('click', getTemp);
+searchInp.addEventListener('keypress', ()=>{
+    if(event.key == "Enter"){
+        searchBtn.click();
+    }
+});
 
+
+//forcast
