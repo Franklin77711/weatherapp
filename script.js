@@ -1,7 +1,7 @@
 const searchInp = document.getElementById('search-input');
 const searchBtn = document.getElementById('search-button');
 const weatherDiv = document.getElementById('weather');
-
+const forcastDiv = document.getElementById('forcast');
 
 const thunderImg = "https://help.apple.com/assets/630670789D0ECE568E327B6C/6306707F9D0ECE568E327BA0/en_US/baba772faa46d8382deeeb9733f294fb.png";
 const drizzleImg = "https://help.apple.com/assets/630670789D0ECE568E327B6C/6306707F9D0ECE568E327BA0/en_US/a55fef55bbeb0762a8dd329b4b8ad342.png";
@@ -31,6 +31,7 @@ async function getTemp(){
     const weatherData = await response.json();
     if(weatherDiv.childElementCount > 1){
         weatherDiv.innerHTML="";
+        forcastDiv.innerHTML="";
     }
     //error handle
     if(weatherData.cod == 400 || weatherData.cod == 404){
@@ -45,12 +46,34 @@ async function getTemp(){
 function creationMain(weatherData){
     let cityName = document.createElement('div');
     cityName.setAttribute('id', 'city-name');
+
     let lowCityName = searchInp.value;
     cityName.textContent = `${weatherData.sys.country}, ${lowCityName.charAt(0).toUpperCase() + lowCityName.slice(1)}`;
     weatherDiv.appendChild(cityName);
 
-  
-    let responseID = weatherData.weather[0].id;
+    let weatherImg = choosePic(weatherData.weather[0].id)
+    weatherDiv.appendChild(weatherImg);
+
+    let currentTemp = document.createElement('div');
+    currentTemp.setAttribute('id', 'current-temp');
+    currentTemp.textContent = `${Math.round(weatherData.main.temp)} °C`;
+    weatherDiv.appendChild(currentTemp);
+
+    let feelTmp = document.createElement('div');
+    feelTmp.setAttribute('id', 'feels-like');
+    feelTmp.textContent = `Feels like: ${Math.round(weatherData.main.feels_like)} °C`;
+    weatherDiv.appendChild(feelTmp);
+
+    let systemBtn = document.createElement('button');
+    systemBtn.setAttribute('id', 'system');
+    systemBtn.textContent = "Use Fahrenheit";
+    weatherDiv.appendChild(systemBtn);
+
+    systemBtn.addEventListener('click', convertSystem.bind(null, Math.round(weatherData.main.temp), Math.round(weatherData.main.feels_like), currentTemp, feelTmp, systemBtn));
+}
+
+function choosePic(respID){
+    let responseID = respID
     let currentTempImg = document.createElement('img');
     currentTempImg.setAttribute('id', 'current-img');
     if(apiCodes.Rain.includes(responseID)){
@@ -70,22 +93,8 @@ function creationMain(weatherData){
     }else if(apiCodes.HalfCloud == responseID){
         currentTempImg.src = halfCloudImg;
     }
-    weatherDiv.appendChild(currentTempImg);
-    
-    let currentTemp = document.createElement('div');
-    currentTemp.setAttribute('id', 'current-temp');
-    currentTemp.textContent = `${Math.round(weatherData.main.temp)} °C`;
-    weatherDiv.appendChild(currentTemp);
-    let feelTmp = document.createElement('div');
-    feelTmp.setAttribute('id', 'feels-like');
-    feelTmp.textContent = `Feels like: ${Math.round(weatherData.main.feels_like)} °C`;
-    weatherDiv.appendChild(feelTmp);
-    let systemBtn = document.createElement('button');
-    systemBtn.setAttribute('id', 'system');
-    systemBtn.textContent = "Use Fahrenheit";
-    weatherDiv.appendChild(systemBtn);
-    systemBtn.addEventListener('click', convertSystem.bind(null, Math.round(weatherData.main.temp), Math.round(weatherData.main.feels_like), currentTemp, feelTmp, systemBtn));
 
+    return currentTempImg
 }
 
 
@@ -103,12 +112,22 @@ function convertSystem(tempNum,feelNum, curTmp, feel, btn){
         feel.textContent = `Feels like: ${feelInCel} °C`;
         btn.textContent = "Use Fahrenheit";
     }
+    const temps = document.querySelectorAll('.forcast-temp');
+    for(let temp of temps){
+        let forTempNum = temp.textContent.split(" ");
+    if(temp.textContent.includes("°C")){
+        temp.textContent = `${Math.round((forTempNum[0] * 1.8) + 32)} °F`;
+    }else if(temp.textContent.includes("°F")){ 
+        temp.textContent = `${Math.round((forTempNum[0] - 32) * 5 / 9)} °C`;
+    }
+}
 }
 
 function remove(){
     weatherDiv.innerHTML="";
+    forcastDiv.innerHTML="";
 }
-searchBtn.addEventListener('click', getTemp);
+searchBtn.addEventListener('click', renderAll);
 searchInp.addEventListener('keypress', ()=>{
     if(event.key == "Enter"){
         searchBtn.click();
@@ -119,15 +138,15 @@ searchInp.addEventListener('keypress', ()=>{
 //forcast
 async function getForcast(){
   //  let cityName = searchInp.value;
-    const forResponse = await fetch("https://api.openweathermap.org/data/2.5/forecast?q=Budapest&appid=cacda985ba1188b608fba471944685ef&units=metric");
+    const forResponse = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${searchInp.value}&appid=cacda985ba1188b608fba471944685ef&units=metric`);
     const forWeatherData = await forResponse.json();
-    creationForcast(forWeatherData);
-    
+    let creationResult = creationForcast(forWeatherData)
+    return creationResult;
 }
 
 function creationForcast(forData){
     currDate = currentDate();
-    jsonArray = forData.list
+    jsonArray = forData.list;
     myForArray = []
     //loop the json data
     for (let element of jsonArray) {
@@ -138,8 +157,7 @@ function creationForcast(forData){
     //loop myForArray to sort temperature by day
     let sortedTemper = [[], [], [], [], []];
     for(let temper of myForArray){
-        if(temper.dt_txt.includes(currDate[1]))
-        {
+        if(temper.dt_txt.includes(currDate[1])){
             sortedTemper[0].push(temper.main.temp)
         }else if(temper.dt_txt.includes(currDate[2])){
             sortedTemper[1].push(temper.main.temp)
@@ -157,7 +175,34 @@ function creationForcast(forData){
         let average = Math.round(temperByDay.reduce((a, b) => a + b, 0) / temperByDay.length);
         avarageTmp.push(average)
     }
-    console.log(avarageTmp)
+    //loop to get the response codes
+    let codeAndDate = []
+    for(let code of jsonArray){
+        if(!code.dt_txt.includes(currDate[0])){
+            codeAndDate.push([code.dt_txt ,code.weather[0].id])
+        }
+    }
+    //group the codes by day
+    let codesGrouped = [[],[],[],[],[]];
+    for(let group of codeAndDate){
+        if(group[0].includes(currDate[1])){
+            codesGrouped[0].push(group[1])
+        }else if(group[0].includes(currDate[2])){
+            codesGrouped[1].push(group[1])
+        }else if(group[0].includes(currDate[3])){
+            codesGrouped[2].push(group[1])
+        }else if(group[0].includes(currDate[4])){
+            codesGrouped[3].push(group[1])
+        }else if(group[0].includes(currDate[5])){
+            codesGrouped[4].push(group[1])
+        }
+    }
+    //get the top code
+    let codeForImg = [];
+    for(let code of codesGrouped){
+        codeForImg.push(code.splice(Math.floor((code.length-1) / 2), 1)[0])
+    }
+    return [avarageTmp, codeForImg]
 }
 function currentDate(){
     const date = new Date();
@@ -198,8 +243,71 @@ function currentDate(){
     let currDate3 = `${year}-${month}-${day3}`
     let currDate4 = `${year}-${month}-${day4}`
     let currDate5 = `${year}-${month}-${day5}`
-   return [currDate, currDate1, currDate2, currDate3, currDate4, currDate5]
-   
+   return [currDate, currDate1, currDate2, currDate3, currDate4, currDate5] 
 }
-currentDate()
-getForcast();
+function getDays(){
+    const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday", "Sunday","Monday","Tuesday","Wednesday"];
+
+    const d = new Date();
+    let day1 = weekday[d.getDay() + 1];
+    let day2 = weekday[d.getDay() + 2];
+    let day3 = weekday[d.getDay() + 3];
+    let day4 = weekday[d.getDay() + 4];
+
+    return [day1, day2, day3, day4]
+}
+
+async function renderForcast(){
+
+    let days =  getDays();
+    let forcast = await getForcast();
+    //let code = forcast[1];
+
+    
+    days.forEach((day, temp) => {
+
+        let temper = forcast[0][temp];
+        let code = forcast[1][temp];
+        console.log(code)
+        console.log(temper)
+            let forcastDayDiv = document.createElement('div');
+                forcastDayDiv.setAttribute('class', 'day-cast nextday');
+                forcastDiv.appendChild(forcastDayDiv);
+                
+
+            let forcastDay = document.createElement('p');
+                forcastDay.textContent = day; 
+                forcastDayDiv.appendChild(forcastDay);
+               
+            let forcastDayTemp = document.createElement('p');
+                forcastDayTemp.setAttribute('class', 'forcast-temp')
+                forcastDayTemp.textContent = `${temper} °C`;
+                forcastDayDiv.appendChild(forcastDayTemp);
+           
+                    let forcastDayImg = document.createElement('img');
+                    
+                    if(apiCodes.Rain.includes()){
+                        forcastDayImg.src = rainImg;
+                    }else if(apiCodes.Thunder.includes(code)){
+                        forcastDayImg.src = thunderImg;
+                    }else if(apiCodes.Drizzle.includes(code)){
+                        forcastDayImg.src = drizzleImg;
+                    }else if(apiCodes.Snow.includes(code)){
+                        forcastDayImg.src = snowImg;
+                    }else if(apiCodes.Mist.includes(code)){
+                        forcastDayImg.src = mistImg;
+                    }else if(apiCodes.Cloud.includes(code)){
+                        forcastDayImg.src = cloudImg;
+                    }else if(apiCodes.Clear == code){
+                        forcastDayImg.src = clearImg;
+                    }else if(apiCodes.HalfCloud == code){
+                        forcastDayImg.src = halfCloudImg;
+                    }
+                    forcastDayDiv.appendChild(forcastDayImg);
+                })          
+    }
+
+function renderAll(){
+    getTemp();
+    renderForcast();
+}
