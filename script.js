@@ -264,12 +264,11 @@ async function renderForcast(){
     //let code = forcast[1];
 
     
-    days.forEach((day, temp) => {
+    days.forEach((day, codes) => {
 
-        let temper = forcast[0][temp];
-        let code = forcast[1][temp];
-        console.log(code)
-        console.log(temper)
+        let temper = forcast[0][codes];
+        let code = forcast[1][codes];
+
             let forcastDayDiv = document.createElement('div');
                 forcastDayDiv.setAttribute('class', 'day-cast nextday');
                 forcastDiv.appendChild(forcastDayDiv);
@@ -286,7 +285,7 @@ async function renderForcast(){
            
                     let forcastDayImg = document.createElement('img');
                     
-                    if(apiCodes.Rain.includes()){
+                    if(apiCodes.Rain.includes(code)){
                         forcastDayImg.src = rainImg;
                     }else if(apiCodes.Thunder.includes(code)){
                         forcastDayImg.src = thunderImg;
