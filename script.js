@@ -24,7 +24,7 @@ const apiCodes ={
 
 }
 
-// current
+// current 
 async function getTemp(){
     let cityName = searchInp.value;
     const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=1de312eefbe68f2e6d01aab3b718e659&units=metric`);
@@ -36,17 +36,17 @@ async function getTemp(){
     if(weatherData.cod == 400 || weatherData.cod == 404){
         alert(weatherData.message);
     }else{
-        creation(weatherData);
+        creationMain(weatherData);
         searchInp.value = '';
     }
     }
 
 
-function creation(weatherData){
+function creationMain(weatherData){
     let cityName = document.createElement('div');
     cityName.setAttribute('id', 'city-name');
     let lowCityName = searchInp.value;
-    cityName.textContent = lowCityName.charAt(0).toUpperCase() + lowCityName.slice(1);
+    cityName.textContent = `${weatherData.sys.country}, ${lowCityName.charAt(0).toUpperCase() + lowCityName.slice(1)}`;
     weatherDiv.appendChild(cityName);
 
   
@@ -117,3 +117,89 @@ searchInp.addEventListener('keypress', ()=>{
 
 
 //forcast
+async function getForcast(){
+  //  let cityName = searchInp.value;
+    const forResponse = await fetch("https://api.openweathermap.org/data/2.5/forecast?q=Budapest&appid=cacda985ba1188b608fba471944685ef&units=metric");
+    const forWeatherData = await forResponse.json();
+    creationForcast(forWeatherData);
+    
+}
+
+function creationForcast(forData){
+    currDate = currentDate();
+    jsonArray = forData.list
+    myForArray = []
+    //loop the json data
+    for (let element of jsonArray) {
+        if(!element.dt_txt.includes(currDate[0])){
+            myForArray.push(element);
+        }
+    }
+    //loop myForArray to sort temperature by day
+    let sortedTemper = [[], [], [], [], []];
+    for(let temper of myForArray){
+        if(temper.dt_txt.includes(currDate[1]))
+        {
+            sortedTemper[0].push(temper.main.temp)
+        }else if(temper.dt_txt.includes(currDate[2])){
+            sortedTemper[1].push(temper.main.temp)
+        }else if(temper.dt_txt.includes(currDate[3])){
+            sortedTemper[2].push(temper.main.temp)
+        }else if(temper.dt_txt.includes(currDate[4])){
+            sortedTemper[3].push(temper.main.temp)
+        }else if(temper.dt_txt.includes(currDate[5])){
+            sortedTemper[4].push(temper.main.temp)
+        }
+    }
+    //loop to sorted array to get the avarage temperature by day
+    let avarageTmp = []
+    for(let temperByDay of sortedTemper){
+        let average = Math.round(temperByDay.reduce((a, b) => a + b, 0) / temperByDay.length);
+        avarageTmp.push(average)
+    }
+    console.log(avarageTmp)
+}
+function currentDate(){
+    const date = new Date();
+
+    let day = date.getDate();
+    if (day < 10) {
+        day = `0${day}`;
+    }
+    let day1 = date.getDate() +1;
+    if (day1 < 10) {
+        day1 = `0${day1}`;
+    }
+    let day2 = date.getDate() +2;
+    if (day2 < 10) {
+        day2 = `0${day2}`;
+    }
+    let day3 = date.getDate() +3;
+    if (day3 < 10) {
+        day3 = `0${day2}`;
+    }
+    let day4 = date.getDate() +4;
+    if (day4 < 10) {
+        day4 = `0${day2}`;
+    }
+    let day5 = date.getDate() +5;
+    if (day5 < 10) {
+        day5 = `0${day5}`;
+    }
+    let month = date.getMonth() + 1;
+        if (month < 10) {
+            month = `0${month}`;
+        }
+    let year = date.getFullYear();
+    
+    let currDate = `${year}-${month}-${day}`
+    let currDate1 = `${year}-${month}-${day1}`
+    let currDate2 = `${year}-${month}-${day2}`
+    let currDate3 = `${year}-${month}-${day3}`
+    let currDate4 = `${year}-${month}-${day4}`
+    let currDate5 = `${year}-${month}-${day5}`
+   return [currDate, currDate1, currDate2, currDate3, currDate4, currDate5]
+   
+}
+currentDate()
+getForcast();
