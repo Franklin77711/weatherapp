@@ -50,14 +50,10 @@ body{
     border: none;
     border-bottom: 2px solid white;
     outline: none;
-    padding-top: 1.6em;
+    
 }
  #search-label{
     cursor: text;
-    position: absolute;
-    top: 7.5em;
-    display: block;
-    transition: 0.2s;
     font-size: 1rem;
     z-index: -999;
  }
@@ -73,10 +69,15 @@ body{
 #current-img{
     width: 7em;
     margin-bottom: 15px;
+    animation: 1s ease-out 0s 1 slideInFromtop;
 }
 
 #current-temp{
     font-size: 38px;
+    animation: 1s ease-out 0s 1 slideInFromtop;
+}
+#feels-like{
+    animation: 1s ease-out 0s 1 slideInFromtop;
 }
 
 button {
@@ -105,6 +106,7 @@ button:focus {
 
 #city-name{
     font-size: 2rem;
+    animation: 1s ease-out 0s 1 slideInFromtop;
 }
 
 #forcast{
@@ -126,7 +128,7 @@ button:focus {
     flex-direction: column;
     margin-bottom: 1em;
     align-items: center;
-    animation: 1s ease-out 0s 1 slideInFromtop;
+    animation: 1s ease-in 0s 1 slideInFromtop;
 
 }
 .day-cast > img{
@@ -173,14 +175,46 @@ button:focus {
     .forcast-day{
         font-size: 1.3em;
     }
-    #search-label{
-        top: 11.5em;
-     }
-     #search-input:focus{
-        padding-top: 1.7em;
-     }
-     #search-input:valid{
-        padding-top: 1.7em;
-     }
+    #current-temp{
+        animation: 1s ease-out 0s 1 slideInFromLeft;
+    }
+    #feels-like{
+        animation: 1s ease-out 0s 1 slideInFromLeft;
+    }
+    #current-img{
+        animation: 1s ease-in 0s 1 slideInFromLeft;
+    }
+    #city-name{
+        animation: 1s ease-out 0s 1 slideInFromLeft;
+    }
+    
+    
+    
 }
 
+/*
+@keyframes slideOutTotop {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+  @keyframes slideOutTotop {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+  @keyframes slideOutTotop {
+    0% {
+      transform: translateY(-100);
+    }
+    100% {
+      transform: translateY();
+    }
+  }
+*/
