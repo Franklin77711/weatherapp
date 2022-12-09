@@ -1,30 +1,66 @@
+@font-face {
+    font-family: GoodTime;
+    src: url("/Fonts/2MASS\ J1808-Normal\ \(personal\ use\).otf") format("opentype");
+}
+
 body{
     margin: 0;
     padding: 0;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: GoodTime;
+    background-repeat: no-repeat;
+    background-position: -10em -50em;
+    color: white;
 }
 #title{
-    color: aqua;
     font-size: 3rem;
     text-align: center;
     margin: 0;
     padding-top: 1rem;
+    
 }
 
 #search-bar{
     margin: 2em 0;
+    padding-bottom: 2em;
     display: flex;
-    gap: 50px;
+    gap: 1em;
     justify-content: center;
     align-items:center;
+    border-bottom: 1px solid white;
 }
 #search-button{
     position: relative;
-    top: 3px;
+    padding: 0.7em;
+ 
 }
 #search-input{
     margin: 0.5em 0;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid white;
+    outline: none;
+    color: white;
+    font-family: inherit;
 }
+#search-input::placeholder{
+    color: transparent;
+}
+
+#search-input:focus, #search-input:valid{
+    border: none;
+    border-bottom: 2px solid white;
+    outline: none;
+    padding-top: 1.6em;
+}
+ #search-label{
+    cursor: text;
+    position: absolute;
+    top: 7.5em;
+    display: block;
+    transition: 0.2s;
+    font-size: 1rem;
+    z-index: -999;
+ }
 
 #input-div{
     display: flex;
@@ -45,10 +81,15 @@ body{
 
 button {
     border: none;
-    background-color: grey;
     color: white;
-    padding: 0.5em;
-    border-radius: 10px;
+    padding: 1em;
+    border: 2px solid white;
+    border-radius: 1em;
+    background-color: transparent;
+    letter-spacing: 0.1em;
+    font-weight: 500;
+    font-size: 1em;
+
 }
 button:focus {
     border: none;
@@ -73,18 +114,44 @@ button:focus {
     gap: 1em;
     justify-content: space-around;
 }
+.forcast-temp{
+    font-size: 1.3em;
+}
+.forcast-day{
+    font-size: 1.3em;
+}
 .day-cast{
     display: flex;
     flex-direction: column;
     margin-bottom: 1em;
     align-items: center;
+    animation: 1s ease-out 0s 1 slideInFromtop;
 
 }
 .day-cast > img{
     width: 5em;
 }
+@keyframes slideInFromtop {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+  @keyframes slideInFromLeft {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
 
 @media (max-width: 600px){
+    body{
+        background-position: -40em -40em;
+    }
     #forcast{
         flex-direction: column;
         position: relative;
@@ -96,6 +163,23 @@ button:focus {
         gap: 3em;
         margin-left: 1em;
         margin-bottom: 1em;
+        animation: 1s ease-out 0s 1 slideInFromLeft;
     
     }
+    .forcast-temp{
+        font-size: 1em;
+    }
+    .forcast-day{
+        font-size: 1.3em;
+    }
+    #search-label{
+        top: 11.5em;
+     }
+     #search-input:focus{
+        padding-top: 1.7em;
+     }
+     #search-input:valid{
+        padding-top: 1.7em;
+     }
 }
+

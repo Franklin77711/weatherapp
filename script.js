@@ -1,3 +1,7 @@
+window.onload = function() {
+    changeBgImg();
+  };
+
 const searchInp = document.getElementById('search-input');
 const searchBtn = document.getElementById('search-button');
 const weatherDiv = document.getElementById('weather');
@@ -261,7 +265,6 @@ async function renderForcast(){
 
     let days =  getDays();
     let forcast = await getForcast();
-    //let code = forcast[1];
 
     
     days.forEach((day, codes) => {
@@ -275,6 +278,7 @@ async function renderForcast(){
                 
 
             let forcastDay = document.createElement('p');
+                forcastDay.setAttribute('class', 'forcast-day')
                 forcastDay.textContent = day; 
                 forcastDayDiv.appendChild(forcastDay);
                
@@ -305,6 +309,18 @@ async function renderForcast(){
                     forcastDayDiv.appendChild(forcastDayImg);
                 })          
     }
+
+function changeBgImg(){
+    let date = new Date();
+    let hour = date.getHours();
+    if(0<= hour <=7){
+        document.body.style.backgroundImage =  'url("https://wallpaperaccess.com/full/1213388.jpg")'
+    }else if(7< hour <= 21){
+        document.body.style.backgroundImage =  'url("https://wallpaperaccess.com/full/1672044.jpg")'
+    }else{
+        document.body.style.backgroundImage =  'url("https://wallpaperaccess.com/full/1213388.jpg")'
+    }
+}
 
 function renderAll(){
     getTemp();
