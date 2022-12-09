@@ -313,9 +313,9 @@ async function renderForcast(){
 function changeBgImg(){
     let date = new Date();
     let hour = date.getHours();
-    if(0<= hour <=7){
+    if(hour >= 0 && hour <=7){
         document.body.style.backgroundImage =  'url("https://wallpaperaccess.com/full/1213388.jpg")'
-    }else if(7< hour <= 21){
+    }else if(hour > 7 && hour <= 21){
         document.body.style.backgroundImage =  'url("https://wallpaperaccess.com/full/1672044.jpg")'
     }else{
         document.body.style.backgroundImage =  'url("https://wallpaperaccess.com/full/1213388.jpg")'
