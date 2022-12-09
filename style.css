@@ -1,6 +1,6 @@
 @font-face {
     font-family: GoodTime;
-    src: url("/Fonts/2MASS\ J1808-Normal\ \(personal\ use\).otf") format("opentype");
+    src: url("Fonts/normal.otf") format("opentype");
 }
 
 body{
